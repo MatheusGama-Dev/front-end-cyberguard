@@ -1,12 +1,14 @@
 import { Navigate } from 'react-router-dom';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from '../firebase';
 
-export default function PrivateRoute({ children }) {
-  const token = localStorage.getItem('token');
+const PrivateRoute = ({ children }) => {
+  const [user, loading] = useAuthState(auth);
 
-  if (!token) {
-    // Se não tiver token, redireciona para login
-    return <Navigate to="/" />;
-  }
+  if (loading) return <p>Carregando...</p>;
+  if (!user) return <Navigate to="/" />;
 
   return children;
-}
+};
+
+export default PrivateRoute;

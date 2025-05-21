@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth } from '../firebase'; // importa a instância do Firebase
 
 export default function Register() {
   const navigate = useNavigate();
@@ -16,19 +18,23 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch('http://localhost:3000/api/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
-    });
+    try {
+      // Cria o usuário com email e senha
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        form.email,
+        form.password
+      );
 
-    const data = await res.json();
+      // Atualiza o perfil com o nome
+      await updateProfile(userCredential.user, {
+        displayName: form.name,
+      });
 
-    if (data.success) {
       alert('Conta criada com sucesso!');
-      navigate('/'); // volta pra tela de login
-    } else {
-      alert(data.error || 'Erro ao criar conta');
+      navigate('/'); // Redireciona para login
+    } catch (error) {
+      alert('Erro ao criar conta: ' + error.message);
     }
   };
 
@@ -82,7 +88,7 @@ export default function Register() {
               required
             />
           </div>
-          <button className="w-full bg-gradient-to-r from-cyan-500 to-blue-700 py-2 rounded-lg text-white font-semibold hover:opacity-90">
+          <button className="w-full bg-gradient-to-r from-red-700 to-red-500 hover:from-red-600 hover:to-red-400 py-2 rounded-lg text-white font-semibold hover:opacity-90">
             Criar conta
           </button>
           <p className="text-sm text-center text-gray-400">

@@ -1,6 +1,9 @@
 import { Navigate } from 'react-router-dom';
 
-export function PrivateRoute({ children }) {
+export default function PrivateRoute({ children }) {
+  // sua lógica aqui
+
+
   const token = localStorage.getItem('token');
 
   if (!token) {
