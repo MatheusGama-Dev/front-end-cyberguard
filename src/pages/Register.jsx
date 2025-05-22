@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { auth } from '../firebase'; // importa a instância do Firebase
+import { auth } from '../firebase';
+import { toast } from 'react-toastify';
 
 export default function Register() {
   const navigate = useNavigate();
@@ -18,23 +19,38 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
+
+    if (!emailRegex.test(form.email)) {
+      toast.error('Por favor, insira um e-mail válido.');
+      return;
+    }
+
+    if (!passwordRegex.test(form.password)) {
+      toast.error('A senha deve ter pelo menos 6 caracteres, uma letra maiúscula e um número.');
+      return;
+    }
+
     try {
-      // Cria o usuário com email e senha
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         form.email,
         form.password
       );
 
-      // Atualiza o perfil com o nome
       await updateProfile(userCredential.user, {
         displayName: form.name,
       });
 
-      alert('Conta criada com sucesso!');
-      navigate('/'); // Redireciona para login
+      toast.success('Conta criada com sucesso!');
+      navigate('/');
     } catch (error) {
-      alert('Erro ao criar conta: ' + error.message);
+      if (error.code === 'auth/email-already-in-use') {
+        toast.error('Este e-mail já está em uso.');
+      } else {
+        toast.error('Erro ao criar conta: ' + error.message);
+      }
     }
   };
 

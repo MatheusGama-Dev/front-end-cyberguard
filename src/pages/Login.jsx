@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase"; // importa a instância do Firebase
+import { auth } from "../firebase";
+import { toast } from 'react-toastify';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -14,6 +15,13 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(form.email)) {
+      toast.error('E-mail inválido.');
+      return;
+    }
+
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -22,15 +30,13 @@ export default function Login() {
       );
 
       const user = userCredential.user;
-
-      // Se quiser guardar o token do Firebase:
       const token = await user.getIdToken();
       localStorage.setItem("token", token);
 
-      alert('Login realizado com sucesso!');
-      navigate('/Dashboard');
+      toast.success('Login realizado com sucesso!');
+      navigate('/dashboard');
     } catch (error) {
-      alert("Erro ao fazer login: " + error.message);
+      toast.error("Erro ao fazer login: " + error.message);
     }
   };
 
