@@ -9,7 +9,7 @@ import {
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";
-import { signOut } from "firebase/auth";
+import { ArrowLeft } from "lucide-react"; // <- ícone
 
 export default function Chat() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export default function Chat() {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
 
-  // Atualiza usuário logado
+  // Atualiza usuário logado no Client
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((u) => {
       setUser(u);
@@ -29,7 +29,7 @@ export default function Chat() {
   // Redireciona se não estiver logado
   useEffect(() => {
     if (user === null) {
-      navigate("/dashboard");
+      navigate("/login");
     }
   }, [user, navigate]);
 
@@ -62,8 +62,8 @@ export default function Chat() {
     }
   };
 
-  const handleLogout = async () => {
-    await signOut(auth);
+  // Voltar para o dashboard sem deslogar
+  const handleBackToDashboard = () => {
     navigate("/dashboard");
   };
 
@@ -82,7 +82,7 @@ export default function Chat() {
   }
 
   if (user === null) {
-    return null; // já será redirecionado pelo useEffect
+    return null; // já será redirecionado
   }
 
   return (
@@ -90,10 +90,11 @@ export default function Chat() {
       <header className="bg-gray-800 p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">Chat</h1>
         <button
-          onClick={handleLogout}
-          className="bg-red-600 hover:bg-red-500 px-3 py-1 rounded"
+          onClick={handleBackToDashboard}
+          className="flex items-center gap-2 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded"
         >
-          Sair
+          <ArrowLeft className="w-5 h-5" />
+          <span className="hidden sm:inline">Dashboard</span>
         </button>
       </header>
 
