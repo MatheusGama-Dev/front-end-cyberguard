@@ -19,19 +19,6 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
-
-    if (!emailRegex.test(form.email)) {
-      toast.error('Por favor, insira um e-mail válido.');
-      return;
-    }
-
-    if (!passwordRegex.test(form.password)) {
-      toast.error('A senha deve ter pelo menos 6 caracteres, uma letra maiúscula e um número.');
-      return;
-    }
-
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -44,13 +31,9 @@ export default function Register() {
       });
 
       toast.success('Conta criada com sucesso!');
-      navigate('/');
+      navigate('/chat');
     } catch (error) {
-      if (error.code === 'auth/email-already-in-use') {
-        toast.error('Este e-mail já está em uso.');
-      } else {
-        toast.error('Erro ao criar conta: ' + error.message);
-      }
+      toast.error('Erro ao criar conta: ' + error.message);
     }
   };
 

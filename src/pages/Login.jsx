@@ -1,12 +1,15 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -15,28 +18,18 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(form.email)) {
-      toast.error('E-mail inválido.');
-      return;
-    }
-
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        form.email,
-        form.password
-      );
-
-      const user = userCredential.user;
-      const token = await user.getIdToken();
-      localStorage.setItem("token", token);
-
-      toast.success('Login realizado com sucesso!');
-      navigate('/dashboard');
+      await signInWithEmailAndPassword(auth, form.email, form.password);
+      toast.success("Login realizado com sucesso!");
+      navigate("/dashboard"); // redireciona para dashboard
     } catch (error) {
-      toast.error("Erro ao fazer login: " + error.message);
+      if (error.code === "auth/user-not-found") {
+        toast.error("Usuário não encontrado.");
+      } else if (error.code === "auth/wrong-password") {
+        toast.error("Senha incorreta.");
+      } else {
+        toast.error("Erro ao fazer login: " + error.message);
+      }
     }
   };
 
@@ -46,7 +39,7 @@ export default function Login() {
         <div className="space-y-6">
           <h1 className="text-4xl font-bold">Bem-vindo de volta</h1>
           <p className="text-gray-400 text-lg">
-            Acesse sua conta e continue de onde parou.
+            Entre na sua conta para acessar o Dashboard.
           </p>
         </div>
 
@@ -82,8 +75,10 @@ export default function Login() {
             Entrar
           </button>
           <p className="text-sm text-center text-gray-400">
-            Não tem uma conta?{' '}
-            <Link to="/register" className="text-cyan-400 hover:underline">Criar conta</Link>
+            Não tem uma conta?{" "}
+            <Link to="/register" className="text-cyan-400 hover:underline">
+              Criar conta
+            </Link>
           </p>
         </form>
       </div>
