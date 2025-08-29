@@ -21,7 +21,8 @@ export default function Login() {
     try {
       await signInWithEmailAndPassword(auth, form.email, form.password);
       toast.success("Login realizado com sucesso!");
-      navigate("/dashboard"); // redireciona para dashboard
+      // ✅ Redireciona para dashboard sem manter /login no histórico
+      navigate("/dashboard", { replace: true });
     } catch (error) {
       if (error.code === "auth/user-not-found") {
         toast.error("Usuário não encontrado.");
