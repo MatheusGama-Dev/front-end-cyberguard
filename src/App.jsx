@@ -5,7 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import Conteudo from "./pages/Conteudo"; 
 import Chat from "./pages/Chat";
-// seu chat
+import Forum from "./pages/forum"; // ⚠️ Certifique-se de ter este componente
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,9 +15,10 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-           <Route path="/" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          
           <Route
             path="/dashboard"
             element={
@@ -26,6 +27,16 @@ function App() {
               </PrivateRoute>
             }
           />
+
+          <Route
+            path="/forum/:courseId"
+            element={
+              <PrivateRoute>
+                <Forum />
+              </PrivateRoute>
+            }
+          />
+
           <Route
             path="/conteudo/:id"
             element={
@@ -35,7 +46,6 @@ function App() {
             }
           />
 
-          {/* rota para o Chat */}
           <Route
             path="/chat"
             element={
