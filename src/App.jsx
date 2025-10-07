@@ -1,76 +1,38 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import PrivateRoute from "./components/PrivateRoute";
-import Conteudo from "./pages/Conteudo"; 
-import Chat from "./pages/Chat";
-import Forum from "./pages/forum"; // ⚠️ Certifique-se de ter este componente
-
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function App() {
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import Chat from "./pages/Chat";
+import Conteudo from "./pages/Conteudo";
+import Forum from "./pages/forum";
+
+export default function App() {
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          
-          <Route
-            path="/dashboard"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/forum/:courseId"
-            element={
-              <PrivateRoute>
-                <Forum />
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/conteudo/:id"
-            element={
-              <PrivateRoute>
-                <Conteudo />
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/chat"
-            element={
-              <PrivateRoute>
-                <Chat />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-
-      {/* Container de notificações do Toastify */}
+    <BrowserRouter>
       <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
-        newestOnTop={false}
+        newestOnTop
         closeOnClick
+        rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
         theme="dark"
       />
-    </>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/chat" element={<Chat />} />
+        <Route path="/conteudo/:id" element={<Conteudo />} />
+        <Route path="/forum/:courseId" element={<Forum />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
